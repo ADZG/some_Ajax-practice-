@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    姓名:<input type="text" name="username"><br>
+    密码:<input type="text" name="password">
+    <span></span>
+</body>
+
+</html>
+<script>
+    // 获取元素，注册焦点移除事件
+    var inputs = document.querySelector("input");
+    inputs[0].onblur = function () {
+        var name = this.value;
+        // 获取异步对象
+        var xhr = new XMLHttpRequest();
+        // 设置请求行 请求方式 地址拼接上要验证的字符串 是否进行异步
+        xhr.open("get", "http://127.0.0.1:3002/validataUserName?name="+ name, true);
+        // 发送请求
+        send(null);
+        // 监听异步对象
+        xhr.onreadystatechange = function () {
+            // 判断，两个条件，异步对象的进度是否到达第四阶段，响应状态是否正确
+            if (xhr.status == 200 && xhr.readyState == 4) {
+                // 将请求体的数据转化为json数据格式
+                var result = JSON.parse(xhr.responseText);
+                if (result == 401) {
+                    document.querySelector("span").innerText = result.msg;
+                    inputs[0].focus();
+                } else {
+                    document.querySelector("span").innerText = result.msg;
+                }
+            }
+        }
+    }
+
+</script>

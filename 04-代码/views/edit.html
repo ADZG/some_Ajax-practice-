@@ -1,0 +1,134 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hero - Admin</title>
+    <link rel="stylesheet" href="../styles/bootstrap.css">
+    <style>
+        .hero-list img {
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="page-header container">
+            <h1>王者荣耀 <small>英雄管理器</small></h1>
+        </div>
+    </header>
+    <div class="container hero-list">
+        <form>
+            <table class="table table-hover">
+            </table>
+        </form>
+    </div>
+    <script src="../js/template-web.js"></script>
+    <script type="text/template" id="hero">
+                    <tbody>
+                        <input type="hidden" name="img" class="myimg">
+                        <input type="hidden" name="id" class="myid">
+                        <tr>
+                            <td>姓名：</td>
+                            <td><input type="text" name="name" value="{{name}}"></td>
+                        </tr>
+                        <tr>
+                            <td>性别：</td>
+                            <td>
+                                <input id="nan" name="gender" value="男" type="radio" {{gender=="男"?"checked":""}}><label for="nan">男</label>
+                                <input name="gender" value="女" type="radio" {{gender=="女"?"checked":""}} id="nv"><label for="nv">女</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>头像：</td>
+                            <td><img src="http://127.0.0.1:3002/images/{{img}}" alt="" id="photo" width="100"
+                                    style='border: 1px solid #ccc;margin-bottom: 5px;'>
+                                <input type="file" id="img"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><input type="button" id="sub" value="编辑"></td>
+                        </tr>
+                    </tbody>
+    </script>
+    <script src="../js/jquery.js"></script>
+    <script>
+        function getParameter(str) {
+            // 删除?
+            str = str.substring(1)  // id=49&flag=1
+            // 分割字符串
+            var arr = str.split('&') // ["id=49","flag=1"]
+            // 循环遍历再次分割
+            var obj = {}
+            for (var i = 0; i < arr.length; i++) {
+                var temp = arr[i].split('=') // ["id","49"]
+                // 将数据添加到对象
+                obj[temp[0]] = temp[1] // obj[id] = 49
+            }
+            return obj
+        }
+        // 地址栏中的id提取
+        $(function(){
+            // 获取当前页面的id
+            var id=getParameter(location.search).id
+            console.log(id)
+            // 当前元素是动态创建,要委托事件.先获取
+            // 在选择文件的之后,立刻就上传到服务器
+            $("table").on("change","#img",function(){
+                // files获取的是伪数组,需要加上索引拿到对应的文件信息
+                var myfile=$("#img")[0].files[0]
+                // 创建formdata对象
+                var formdata=new FormData()
+                // 将文件传给对象 以键值对的形式传入
+                formdata.append("img",myfile)
+                $.ajax({
+                    type: 'post',
+                    url: 'http://127.0.0.1:3002/uploadFile',
+                    data:formdata,
+                    processData:false,
+                    contentType:false,
+                    success:function(res){
+                        console.log(res)
+                        if(res.code==200){
+                            // 预览
+                            $("#photo").attr("src", "http://127.0.0.1:3002/images/" + res.img + "")
+                            // 再将响应体的图片信息保存到隐藏域的表单中
+                            $(".myimg").val(res.img)
+                        }
+                    }
+                })
+            })
+
+            // 如果用户有修改图片信息，重新加载数据
+            $.ajax({
+                data:{id:id},
+                dataType:"json",
+                type:"get",
+                url:"http://127.0.0.1:3002/getHeroById",
+                success:function(res){
+                    var temp=template("hero",res)
+                    $("table").html(temp)
+                    // 用户可能并没有修改图片，这时候，还要再次将图片名称储存在隐藏域中
+                    $('.myimg').val(res.img)
+                    // 再将id值保存下来，后期要用于编辑提交的时候用
+                    $(".myid").val(res.id)
+                }
+            }) 
+            $("table").on("click", "#sub",function () {
+                console.log(1)
+                $.ajax({
+                    type: "post",
+                    data: $("form").serialize(),
+                    url: "http://127.0.0.1:3002/edit",
+                    dataType: "json",
+                    success: function (res) {
+                        if (res.code == 200) {
+                            alert("编辑成功")
+                            location.href = "./index.html"
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</body>
+
+</html>

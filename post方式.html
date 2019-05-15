@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <form action="" method="POST" >
+        用户名:<input type="text" name="username" id="name"><br>
+        密码:<input type="text" name="password" id="pass"><br>
+        手机:<input type="text" name="phone" id="phone"><br>
+        <input type="submit" value="注册" id="btn">
+    </form>
+</body>
+
+</html>
+<script>
+    var btn=document.getElementById("btn")
+    btn.onclick = function () {
+        var name = document.getElementById("name").value;
+        var pass= document.getElementById("pass").value;
+        var phone = document.getElementById("phone").value;
+        var xhr = new XMLHttpRequest();
+        xhr.open("post","http://127.0.0.1:3002/doRegister");
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send("username="+name+"&password="+pass+"&phone="+phone+"")
+        xhr.onreadystatechange = function () {
+            if (xhr.status == 200 && xhr.readyState == 4) {
+                // 获取异步对象带回来的响应体数据
+                var result = JSON.parse(xhr.responseText);
+                alert(result.msg);
+            }
+        }
+    }
+</script>

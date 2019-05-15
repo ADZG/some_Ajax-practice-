@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        img{
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+    <table></table>
+</body>
+</html>
+<script src="./js/template-web.js"></script>
+<script src="../jquery/jquery-1.12.2.js"></script>
+
+<script type="text/template" id="template">     
+    <% for(var i=0; i < data.length; i++){%>
+            <tr>
+                <td><%=i+1%></td>
+                <td><%=data[i].name%></td>
+                <td>
+                    <% if (data[i].gender == '男') %>
+                        男孩123
+                    <% else %>
+                        女孩456 
+                    <% endif %>
+                </td>
+                <td><img src="http://127.0.0.1:3002/images/<%=data[i].img%>"></td>
+                <td><a href="#">查看</a> <a href="/edit?id=1">修改</a>
+                    <a href="/delete?id=1">删除</a></td>
+            </tr>
+        <%} %>
+</script>
+<script>
+// js逻辑语法用<%%> 换行了，再重新包裹一次
+// 变量用<%=变量%>方式包裹
+$(function(){
+    $.ajax({
+        data:"get",
+        url:"http://127.0.0.1:3002/getalldata",
+        dataType:"json",
+        success:function(res){
+            var temp=template("template",res)
+            console.log(temp)
+            $("table").html(temp)
+        }
+    })
+})
+</script>

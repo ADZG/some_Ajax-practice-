@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        img{
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <table></table>
+</body>
+
+</html>
+<script src="./js/template-web.js"></script>
+<script src="../jquery/jquery-1.12.2.js"></script>
+<script type="text/template" id="list">
+    <% for(var i=0;i< data.length;i++){%>
+        <tr>
+        <td><%=i+1%></td>
+        <td><%=data[i].name%></td> 
+        <td><%=data[i].gender%></td>
+        <td><img src="http://127.0.0.1:3002/images/<%=data[i].img%>" alt=""></td>
+        </tr>
+    <%}%>
+</script>
+<script>
+    $(function(){
+        $.ajax({
+            type:"get",
+            dataType:"json",
+            url:"http://127.0.0.1:3002/getalldata",
+            success:function(res){
+                console.log(res)
+                var temp=template("list",res)
+                $("table").html(temp)
+            }
+        })
+    })
+</script>

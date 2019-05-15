@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            border: 1px solid #666;
+            border-collapse: collapse;
+            color: red;
+            text-align: center;
+        }
+
+        img {
+            vertical-align: middle;
+        }
+
+        #btn,
+        select {
+            text-align: center;
+            width: 70px;
+            height: 20px;
+            font-weight: 800;
+            color: coral;
+        }
+        h3 {
+            color: coral;
+        }
+        td{
+            margin-left: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h3></h3>
+    <table border="1" id="weather">
+        <tbody>
+            <select name="" id="">
+                <option value="广州">广州</option>
+                <option value="沙洋">沙洋</option>
+                <option value="荆门">荆门</option>
+                <option value="海南">海南</option>
+                <option value="宝安">宝安</option>
+                <option value="福田">福田</option>
+            </select>
+            <input type="button" value="获取天气" id="btn">
+        </tbody>
+    </table>
+    <table border="1" id="cloth" cellspacing="10" cellpadding="10">
+        <thead>
+            <th>
+            <td>穿衣指数</td>
+            <td>洗车指数</td>
+            <td>感冒指数</td>
+            <td>运动指数</td>
+            <td>紫外线强度指数</td>
+            </th>
+        </thead>
+    </table>
+</body>
+</html>
+<script src="./js/template-web.js"></script>
+<script src="../jquery/jquery-1.12.2.js"></script>
+<script type="text/template" id="temps">
+        <thead>
+            <tr>
+            <td>日期</td>
+            <td>白天</td>
+            <td>夜晚</td>
+            <td>温度</td>
+            <td>天气</td>
+            <td>风向</td>
+            </tr>
+        </thead>
+     {{each list value index}}
+        <tr>
+            <td>{{value.date}}</td>
+            <td><img src="{{value.dayPictureUrl}}" alt=""></td>
+            <td><img src="{{value.nightPictureUrl}}" alt=""></td>
+            <td>{{value.temperature}}</td>
+            <td>{{value.weather}}</td>
+            <td>{{value.wind}}</td>
+        </tr>
+    {{/each}}
+</script>
+
+<script type="text/template" id="temps2">
+            {{each lis value index}}
+                <tbody>
+                <tr>
+                <td>{{value.tipt}}</td>
+                <td>{{value.title}}</td>
+                <td>{{value.des}}</td>
+                <td>{{value.zs}}</td>
+                </tr>
+                </tbody>
+            {{/each}}
+</script>
+<script>
+    $(function () {
+        $("#btn").on("click", function () {
+            $("select option:selected").text()
+            $.ajax({
+                type: "get",
+                dataType: "jsonp",
+                url: "http://api.map.baidu.com/telematics/v3/weather",
+                data: {
+                    ak: "zVo5SStav7IUiVON0kuCogecm87lonOj",
+                    location: "" + $("select option:selected").text() + "",
+                    output: "json"
+                },
+                success: function (res) {
+                    var temp = template("temps", { list: res.results[0].weather_data })
+                    $("#weather").html(temp)
+                    $("h3").text(res.date)
+                    var cloth = template("temps2", { lis: res.results[0].index })
+                    $("#cloth").html(cloth)
+                }
+            })
+        })
+    })
+</script>

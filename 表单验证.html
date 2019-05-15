@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    用户名:<input type="text" name="username" class="username"><br>
+    密码:<input type="text" name="userpass"><br>
+    <span class="msg"></span>
+    <input type="submit" value="注册">
+</body>
+
+</html>
+<script>
+    // 注册焦点移除事件
+    // 让异步对象发送请求
+    // 设置请求行:open(请求方式,url)
+    // 如果get方式请求，有参数，则参数拼接在字符串中
+    // 当表单失去焦点事件的时候，监听表单内的数据是否符合数据库内的数据
+    document.querySelector(".username").onblur = function () {
+        // 创建异步对象
+        var xhr = new XMLHttpRequest();
+        xhr.open("get", "http://127.0.0.1:3002/validataUserName?name="+this.value);
+        // 监听当前异步对象
+        // 没有参数可以传入null
+        xhr.send(null);
+        xhr.onreadystatechange = function () {
+            if (xhr.status == 200 && xhr.readyState == 4) {
+                // xhr.responseText:响应体数据
+                // 格式化
+                var result = JSON.parse(xhr.responseText);
+                if (result.code == 401) {
+                    document.querySelector(".msg").innerHTML = result.msg;
+                    // 焦点移到用户名框
+                    document.querySelector(".username").focus();
+                } else {
+                    document.querySelector(".msg").innerHTML = result.msg;
+                }
+            }
+        }
+    }
+
+
+
+
+</script>

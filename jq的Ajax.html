@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="post" id="myform">
+        用户名: <input type="text" name="username" id="uname">
+        密码: <input type="password" name="password" id="pword">
+        手机: <input type="number" name="phone" id="pnumber">
+        <input type="button" value="注册" id="btn">
+    </form>
+</body>
+</html>
+<script src="../jquery/jquery-1.12.2.js"></script>
+<script>
+    $("#btn").on("click",function(){
+        $.ajax({
+            type:"post",
+            dataType:"json",
+            data:$("#myform").serialize(),
+            url:"http://127.0.0.1:3002/doRegister",
+            success:function(result){
+                alert(result.msg)
+            },
+            beforeSend:function(arr){
+                var uname=$("#uname").val()
+                var pword=$("#pword").val()
+                var pnumber=$("#pnumber").val()
+                if(uname.trim().length==0||/\W/.test(uname)){
+                    alert("请输入用户名")
+                    return false
+                }
+                if(/\W*/.test(pword)||pword.length>10||pword.length==0){
+                    alert("密码不超过10位，不能使用特殊符号")
+                    return false
+                }
+                if(/^1[1][35789]\d{9}$/.test(pnumber)||pnumber.length==0){
+                    alert("电话号码输入错误")
+                    return false
+                }
+            },
+            complete:function(re){
+                console.log(re)
+            },
+            error:function(ty){
+                console.log(ty)
+            },
+            timeout:9000,
+        })
+    })
+</script>

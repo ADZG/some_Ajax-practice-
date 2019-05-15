@@ -1,0 +1,95 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hero - Admin</title>
+    <link rel="stylesheet" href="../styles/bootstrap.css">
+    <style>
+        .hero-list img {
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="page-header container">
+            <h1>王者荣耀 <small>英雄管理器</small></h1>
+        </div>
+    </header>
+    <div class="container hero-list">
+        <form id='myform'>
+            <!-- <input type="hidden" name="img" id="img1"> -->
+            <table class="table table-hover">
+                <tbody>
+                    <tr>
+                        <td>姓名：</td>
+                        <td><input type="text" name="name"></td>
+                    </tr>
+                    <tr>
+                        <td>性别：</td>
+                        <td><input id="nan" name="gender" value="男" type="radio"><label for="nan">男</label> <input
+                                name="gender" value="女" type="radio" id="nv"><label for="nv">女</label></td>
+                    </tr>
+                    <tr>
+                        <td>头像：</td>
+                        <td><img src="../images/none.png" alt="" id="photo" width="100"
+                                style='border: 1px solid #ccc;margin-bottom: 5px;'>
+                            <input type="file" id="img"></td>
+                        <input type="hidden" id="myimg">
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input type="button" id="sub" value="新增"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</body>
+
+</html>
+
+<script src="../js/jquery.js"></script>
+<script>
+    // 首先要搞定文件上传的问题，上传之后，返回不是图片文件，而是图片名称，
+    // 将图片获取之后，保存在变量中
+    // 监听图片元素的变化 使用change事件
+    $("#img").on("change", function () {
+        // 获取上传控件的值  由于files方式是dom操作方法，需要将jq的元素转化为dom元素
+        var files = $("#img")[0].files[0]
+        // 创建formdata对象
+        var formdata = new FormData();
+        // 将获取到的表单元素给formdata
+        // 键值对的方式插入 img是服务器提供的参数，
+        formdata.append("img", files);
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            data: formdata,
+            url: "http://127.0.0.1:3002/uploadFile",
+            // 因为使用formdata1的缘故，所以要改变两个参数
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                // 让图片在元素中显示
+                $("#photo").attr("src", "http://127.0.0.1:3002/images/" + res.img);
+                // 设置隐藏域表单,再将获取到的信息,保存在隐藏域中
+                $("#myimg").val(res.img)
+            }
+        })
+    })
+    // 点击新增的时候,将表单所有的信息全部提交,图片信息已经保存在隐藏域中,
+    $("#sub").on("click", function () {
+        $.ajax({
+            type: "post",
+            url: "http://127.0.0.1:3002/add",
+            data: $("#myform").serialize(),
+            dataType: "json",
+            success: function (res) {
+                alert(res.msg)
+                location.href="./index.html"
+            }
+        })
+    })
+</script>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <td><img src="" alt=""></td>
+            <td>老乌鸦</td>
+        </tr>
+    </table>
+</body>
+</html>
+<script src="../jquery/jquery-1.12.2.js"></script>
+<script>
+    $(function(){
+        $.ajax({
+            type:"get",
+            url:"http://127.0.0.1:3002/getjson",
+            dataType:"json",
+            success: function (res) {
+                var html = "";
+                for (var i = 0; i < res.data.length; i++) {
+                    html += `<tr>
+                <td>${[i + 1]}</td>    
+            <td><img src=http://127.0.0.1:3002${res.data[i].img} alt=""></td>
+            <td>${res.data[i].name}</td>
+        </tr>`
+                }
+                document.querySelector("table").innerHTML = html
+            }
+        })
+        })
+        
+
+</script>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" name="username" id="name">
+    
+</body>
+</html>
+<script src="../jquery/jquery-1.12.2.js"></script>
+<script>
+    $("#name").on("blur",function(){
+        $.ajax({
+            dataType: "json",
+            type: "get",
+            url: "http://127.0.0.1:3002/validateusername?name="+$("#id").val() + "",
+            success: function(result) {
+                console.log(result);
+            }
+        })
+    })
+</script>
